@@ -7,35 +7,64 @@
 *****************************************************/
 
 #include <iostream>
+#include <queue>
 using namespace std; 
 
-unsigned long long comps[100001][100001]; 
-int inNum[100001];
-int outNum[100001];  
-unsigned long long virus[100001];
-int flag[100001]; 
+typedef struct adjEdge{
+   int no;
+   struct adjEdge *next;
+   adjEdge(int _no){
+       no = _no;
+       next = NULL;
+   }  
+} adj;
+typedef adj * pAdj;
 
-void deleteNode(int no) {
-    for(int i = 0; i < outNum[no]; i++) {
-        virus[comps[no][i]-1] += virus[no]; 
-        inNum[comps[no][i]-1] -=  1; 
+pAdj adjTable[100001]; 
+int indegree[100001];  
+int virus[100001];
+
+void addEdge(int src, int tar) {
+    pAdj pNew = new adj(tar);
+    pNew->next = adjTable[src]; 
+    adjTable[src] = pNew;
+    indegree[tar] += 1; 
+}
+
+void deleteNode(int no, queue<int> &zeroQ) {
+    pAdj pTmp = adjTable[no];
+    while(pTmp != NULL) {
+        int tar = pTmp->no;
+
+        indegree[tar] -= 1;
+        if(indegree[tar] == 0) {
+            zeroQ.push(tar);
+        }
+        virus[tar] += virus[no];
+        virus[tar] %= 142857;
+ 
+        pTmp = pTmp->next;
     }
 }
 
 int topologicalSorting(int n) {
-    for(int j = 0; j < n-1; j ++) {
-        for(int i = 0; i < n; i ++ ) {
-            if(inNum[i] == 0 && flag[i] ==0) {
-                flag[i] = 1; 
-                deleteNode(i);
-            }
+    queue<int> zeroQ;
+    for (int i = 0; i < n; i ++ ) {
+        if(indegree[i] == 0) {
+            zeroQ.push(i);
         }
     }
-    long long sum = 0;
+    while (!zeroQ.empty()) {
+        int cur = zeroQ.front();
+        zeroQ.pop();
+        deleteNode(cur, zeroQ);
+    }
+    int sum = 0;
     for(int i = 0; i < n; i ++ ) {
         sum += virus[i];
+        sum %= 142857;
     }
-    return (sum % 142857); 
+    return sum; 
 }
 
 int main(){
@@ -50,10 +79,8 @@ int main(){
     for(int i = 0; i < m; i++) {
         int a, b;
         cin>>a>>b;
-        comps[a-1][outNum[a-1]]=b;
-        outNum[a-1]++;
-        inNum[b-1]++;
+        addEdge(a-1, b-1);
     }
-    cout<<topologicalSorting(n);
+    cout<<topologicalSorting(n)<<endl;
     return 0;
 }

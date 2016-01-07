@@ -49,6 +49,7 @@ if __name__=="__main__":
             dp[flag][j+1] += num[i-1]
         flag ^= 1
     #print dp 
+    print flag
     ans = 0
     for i in range(0, len) :
         ans = max(dp[flag^1][i],ans) 
