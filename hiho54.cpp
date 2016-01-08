@@ -101,16 +101,16 @@ void tarjan(int v, PEdge *adjTable, stack<int> &dfsS,
 }
 
 void addEdgeToNewTable(int src, int tar, PEdge *newAdj){
-    cout<<"add edge from "<<src<<" to "<<tar<<endl;
     PEdge pTmp = newAdj[src];
     bool flag = true;  
-    while(pTmp == NULL) {
+    while(pTmp != NULL) {
         if(pTmp->tar == tar){
             flag = false;
             break;
         }
         pTmp = pTmp->next;
-    }
+    } 
+   
     if(flag) {
         addEdge(src, tar, newAdj); 
     }
@@ -119,18 +119,19 @@ void addEdgeToNewTable(int src, int tar, PEdge *newAdj){
 PEdge *rebuildMap(vector< vector<int> > &components, PEdge *old, vector<int> &newIndex, 
           vector<int> &newWeight, vector<int> &oldW) {
     PEdge *newTable = new PEdge[components.size()];
+    for(int i = 0; i < components.size(); i++) {
+        newTable[i] = NULL;
+    }
     
     for(int k = 0; k < components.size(); k ++) {
-        vector<int> comp = components[k]; 
+        vector<int> comp = components[k];
         for(int i = 0; i < comp.size(); i ++ ) {
             newWeight[k] += oldW[comp[i]];
 
             // rebuild edges
             PEdge pTmp = old[comp[i]];
             while(pTmp != NULL) {
-                //cout<<"pTmp->tar: "<<pTmp->tar<<endl;
-                //cout<<"add edge from "<<k<<" to "<<newIndex[pTmp->tar]<<endl;
-                if(k != newIndex[pTmp->tar]) {
+                if(k != newIndex[pTmp->tar]) { 
                     addEdgeToNewTable(k, newIndex[pTmp->tar], newTable);
                 }
                 pTmp = pTmp->next;
@@ -141,7 +142,6 @@ PEdge *rebuildMap(vector< vector<int> > &components, PEdge *old, vector<int> &ne
 }
 
 void getFinalAns(PEdge *adjTable, vector<int> &w, int src, int tar, vector<int> &maxSum) { 
-    cout<<"here"<<src<<endl;
     int tmp = maxSum[src] + w[tar];
     if(tmp > maxSum[tar]) {
         maxSum[tar] = tmp; 
@@ -176,18 +176,15 @@ int main(){
     vector<int> newIndex(n, 0);
     vector< vector<int> > components = tarjan(n, adjTable, newIndex); 
     
-    //for(int i = 0; i < newIndex.size(); i ++) {
-    //    cout<<newIndex[i]<<endl;
-    //} 
-    
     vector<int> newW(components.size(), 0);
     PEdge * newTable = rebuildMap(components, adjTable, newIndex, newW, w);
-   
+
     vector<int> maxSum(components.size(), 0);
-    maxSum[0] = newW[0];
-    PEdge ptmp = newTable[0];
+    int start = newIndex[0];
+    maxSum[start] = newW[start];
+    PEdge ptmp = newTable[start];
     while(ptmp != NULL ){
-        getFinalAns(newTable, newW, 0, ptmp->tar, maxSum); 
+        getFinalAns(newTable, newW, start, ptmp->tar, maxSum); 
         ptmp = ptmp->next;  
     }
     
