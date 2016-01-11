@@ -130,6 +130,7 @@ void tarjan(int v, PEdge *adjTable, stack<int> &dfsS,
             //    return; 
             //}   
             component.insert(dfsS.top());
+            inStack[dfsS.top()] == 0;
             dfsS.pop();
         }
         dfsS.pop();
@@ -206,16 +207,16 @@ int main(){
         else {
             cout<<"No"<<endl;
         }
-        cout<<"============================components================================="<<endl;
-        for(vector< set<int> >::iterator it = res.begin(); it != res.end(); it ++) {
-            set<int> comp = *it; 
-            cout<<"{";
-            for(set<int>::iterator comIt = comp.begin(); comIt != comp.end(); comIt ++){
-                cout<<' '<< *comIt;
-            }
-            cout<<" }"<<endl; 
-        }
-        cout<<"======================================================================="<<endl;
+        // cout<<"============================components================================="<<endl;
+        // for(vector< set<int> >::iterator it = res.begin(); it != res.end(); it ++) {
+        //    set<int> comp = *it; 
+        //    cout<<"{";
+        //    for(set<int>::iterator comIt = comp.begin(); comIt != comp.end(); comIt ++){
+        //        cout<<' '<< *comIt;
+        //    }
+        //    cout<<" }"<<endl; 
+        //}
+        // cout<<"======================================================================="<<endl;
         clearTable(n*2, adjTable);
         //cout<<" end case "<<tNo+1<<endl; 
     }
