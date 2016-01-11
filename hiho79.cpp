@@ -134,6 +134,7 @@ void tarjan(int v, PEdge *adjTable, stack<int> &dfsS,
             dfsS.pop();
         }
         dfsS.pop();
+        inStack[v] = 0;
         res.push_back(component);
     }
 }

@@ -89,11 +89,14 @@ void tarjan(int v, PEdge *adjTable, stack<int> &dfsS,
     if(lowIndex[v] == index[v]) {
         vector<int> component; 
         while(v != dfsS.top()) {
-            component.push_back(dfsS.top());
-            newIndex[dfsS.top()] = res.size();
+            int cur = dfsS.top();
+            component.push_back(cur);
+            newIndex[cur] = res.size();
             dfsS.pop();
+            inStack[cur] = 0; 
         }
         dfsS.pop();
+        inStack[v] = 0; 
         component.push_back(v); 
         newIndex[v] = res.size();
         res.push_back(component);
